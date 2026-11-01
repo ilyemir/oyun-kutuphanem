@@ -2,41 +2,37 @@
 <html lang="tr">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>oyun kutuphanem</title>
+    <title>oyun ekle</title>
     <link rel="stylesheet" href="CSS/stil.css">
 </head>
 <body>
     <header>
-        <h1>oyun kutuphanem</h1>
+        <h1>oyun kütüphanem</h1>
         <nav>
-            <a href="index.html">ana sayfa</a> |
-            <a href="kutup.html">kutuphane</a> |
+            <a href="index.html">ana sayfa</a>
+            <a href="kutup.html">kütüphane</a>
             <a href="ekleme.html">oyun ekle</a>
         </nav>
     </header>
 
     <main>
         <h2>yeni oyun ekle</h2>
-
-        <form>
-            <p>oyun adi:</p>
-            <input type="text" name="oyun_adi">
-
-            <p>kategori sec:</p>
+        <form action="kutup.html" method="GET">
+            <p>oyun adı:</p>
+            <input type="text" name="oyunadi" placeholder="örnek: gta v">
+            
+            <p>kategori seç:</p>
             <select name="kategori">
-                <option value="bitirdigim_oyunlar">bitirdigim oyunlar</option>
-                <option value="su_an_oynadiklarim">su an oynadiklarim</option>
-                <option value="oynamak_istediklerim">oynamak istediklerim</option>
+                <option value="bitirdiklerim">bitirdiklerim</option>
+                <option value="oynamak-istediklerim">oynamak istediklerim</option>
             </select>
 
-            <br><br>
-            <button type="submit">kaydet</button>
+            <button type="submit">oyunu kaydet</button>
         </form>
     </main>
 
     <footer>
-        <p>&copy; 2026 - oyun kutuphanem</p>
+        <p>&copy; 2026 oyun kütüphanem</p>
     </footer>
 </body>
 </html>
