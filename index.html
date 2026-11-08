@@ -2,33 +2,60 @@
 <html lang="tr">
 <head>
     <meta charset="UTF-8">
-    <title>ana sayfa</title>
-    <link rel="stylesheet" href="CSS/stil.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ana Sayfa - Oyun Kütüphanem</title>
+    <link rel="stylesheet" href="css/stil.css">
 </head>
 <body>
     <header>
-        <h1>oyun kütüphanem</h1>
+        <h1>Oyun Kütüphanem</h1>
         <nav>
-            <a href="index.html">ana sayfa</a>
-            <a href="kutup.html">kütüphane</a>
-            <a href="ekleme.html">oyun ekle</a>
+            <a href="index.html">Ana Sayfa</a>
+            <a href="library.html">Kütüphane</a>
+            <a href="add-game.html">Oyun Ekle</a>
+            <a href="about.html">Hakkında</a>
         </nav>
     </header>
 
     <main>
-        <h2>hoş geldin</h2>
-        <p>bu site kendi oyun arşivimi ve oynadığım oyunları takip etmek için kurulmuş kişisel bir sayfadır.</p>
-        
-        <br>
-        <h3>hızlı bakış</h3>
-        <ul>
-            <li>bitirilen oyunlar kütüphanede tutulur</li>
-            <li>oyun eklemek için "oyun ekle" butonuna basabilirsiniz</li>
-        </ul>
+        <h2>Hoş Geldin!</h2>
+        <p>Oyun Kütüphanem; oynadığın, bitirdiğin veya oynamak istediğin dijital oyunları tek bir yerden takip etmeni sağlayan kişisel arşiv platformundur.</p>
+
+        <div class="stats-strip">
+            <div class="stat-item">
+                <span id="toplamOyun" class="stat-number">0</span>
+                <span class="stat-label">Toplam Oyun</span>
+            </div>
+            <div class="stat-item">
+                <span id="bitenOyun" class="stat-number">0</span>
+                <span class="stat-label">Bitirilen</span>
+            </div>
+            <div class="stat-item">
+                <span id="istekOyun" class="stat-number">0</span>
+                <span class="stat-label">İstek Listesi</span>
+            </div>
+        </div>
     </main>
 
     <footer>
-        <p>&copy; 2026 oyun kütüphanem</p>
+        <p>&copy; 2026 Oyun Kütüphanem</p>
     </footer>
+
+    <script src="js/app.js"></script>
+    <script>
+        function istatistikleriGuncelle() {
+            const oyunlar = oyunlariGetir();
+            
+            const toplam = oyunlar.length;
+            const biten = oyunlar.filter(o => o.durum === 'Bitti').length;
+            const istek = oyunlar.filter(o => o.durum === 'İstek Listesi').length;
+
+            document.getElementById('toplamOyun').textContent = toplam;
+            document.getElementById('bitenOyun').textContent = biten;
+            document.getElementById('istekOyun').textContent = istek;
+        }
+
+        document.addEventListener('DOMContentLoaded', istatistikleriGuncelle);
+    </script>
 </body>
 </html>
