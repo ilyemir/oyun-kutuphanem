@@ -10,50 +10,101 @@
     <header>
         <h1>Oyun Kütüphanem</h1>
         <nav>
-            <a href="index.html">Ana Sayfa</a>
-            <a href="library.html">Kütüphane</a>
-            <a href="add-game.html">Oyun Ekle</a>
-            <a href="about.html">Hakkında</a>
+            <a href="index.html" class="aktif">Ana Sayfa</a>
+            <a href="kutuphane.html">Kütüphane</a>
+            <a href="oyun-ekle.html">Oyun Ekle</a>
+            <a href="hakkinda.html">Hakkında</a>
+            <button type="button" id="temaButonu" class="tema-butonu">Açık Tema</button>
         </nav>
     </header>
 
     <main>
-        <h2>Hoş Geldin!</h2>
-        <p>Oyun Kütüphanem; oynadığın, bitirdiğin veya oynamak istediğin dijital oyunları tek bir yerden takip etmeni sağlayan kişisel arşiv platformundur.</p>
+        <section id="tanitim" class="bolum-kutu">
+            <h2>Hoş Geldiniz</h2>
+            <p>Oyun Kütüphanem; oynadığınız, bitirdiğiniz veya oynamayı planladığınız dijital oyunları tek bir yerden takip etmenizi sağlayan kişisel arşiv platformudur.</p>
+            <div class="hizli-eylemler">
+                <a href="oyun-ekle.html" class="birincil-baglanti">Yeni Oyun Ekle</a>
+                <button type="button" id="ornekYukleAnaSayfa" class="ikincil-buton">Örnek Oyunları Yükle</button>
+            </div>
+        </section>
 
-        <div class="stats-strip">
-            <div class="stat-item">
-                <span id="toplamOyun" class="stat-number">0</span>
-                <span class="stat-label">Toplam Oyun</span>
+        <section id="istatistikler" class="bolum-kutu">
+            <h2>Kütüphane Özeti</h2>
+            <div class="istatistik-izgarasi">
+                <div class="istatistik-karti">
+                    <span id="toplamOyun" class="istatistik-sayi">0</span>
+                    <span class="istatistik-etiket">Toplam Oyun</span>
+                </div>
+                <div class="istatistik-karti">
+                    <span id="bitenOyun" class="istatistik-sayi">0</span>
+                    <span class="istatistik-etiket">Bitirilen</span>
+                </div>
+                <div class="istatistik-karti">
+                    <span id="istekOyun" class="istatistik-sayi">0</span>
+                    <span class="istatistik-etiket">İstek Listesi</span>
+                </div>
+                <div class="istatistik-karti">
+                    <span id="ortalamaPuan" class="istatistik-sayi">-</span>
+                    <span class="istatistik-etiket">Ortalama Puan</span>
+                </div>
             </div>
-            <div class="stat-item">
-                <span id="bitenOyun" class="stat-number">0</span>
-                <span class="stat-label">Bitirilen</span>
+        </section>
+
+<section id="ozellikler" class="bolum-kutu">
+            <h2>Platform Özellikleri</h2>
+            <div class="ozellik-izgarasi">
+                <div class="ozellik-karti">
+                    <h3>Geniş Oyun Kataloğu</h3>
+                    <p>250 popüler oyundan oluşan hazır veri listesi ile oyun adını seçtiğiniz anda tür bilgisi otomatik olarak doldurulur.</p>
+                </div>
+                <div class="ozellik-karti">
+                    <h3>Durum ve Puan Takibi</h3>
+                    <p>Oyunlarınızı Oynanıyor, Bitti veya İstek Listesi olarak sınıflandırabilir ve puanlarınızı anlık güncelleyebilirsiniz.</p>
+                </div>
+                <div class="ozellik-karti">
+                    <h3>Anlık Arama ve Sıralama</h3>
+                    <p>Kütüphanenizdeki oyunları isme, türe, oynama durumuna veya verdiğiniz puana göre saniyeler içinde filtreleyebilirsiniz.</p>
+                </div>
+                <div class="ozellik-karti">
+                    <h3>Yerel Kayıt ve Tema Desteği</h3>
+                    <p>Eklediğiniz tüm oyunlar tarayıcı hafızasında güvenle saklanır ve tek tıkla açık veya koyu tema arasında geçiş yapabilirsiniz.</p>
+                </div>
             </div>
-            <div class="stat-item">
-                <span id="istekOyun" class="stat-number">0</span>
-                <span class="stat-label">İstek Listesi</span>
-            </div>
-        </div>
+        </section>
     </main>
 
     <footer>
-        <p>&copy; 2026 Oyun Kütüphanem</p>
+        <p>&copy; 2026 Oyun Kütüphanem &middot; BLM2537</p>
     </footer>
 
-    <script src="js/app.js"></script>
+    <script src="js/uygulama.js"></script>
     <script>
         function istatistikleriGuncelle() {
             const oyunlar = oyunlariGetir();
             
             const toplam = oyunlar.length;
-            const biten = oyunlar.filter(o => o.durum === 'Bitti').length;
-            const istek = oyunlar.filter(o => o.durum === 'İstek Listesi').length;
+            const biten = oyunlar.filter(oyun => oyun.durum === 'Bitti').length;
+            const istek = oyunlar.filter(oyun => oyun.durum === 'İstek Listesi').length;
+            const puanliOyunlar = oyunlar.filter(oyun => oyun.puan !== null && oyun.puan !== '' && !isNaN(oyun.puan));
 
             document.getElementById('toplamOyun').textContent = toplam;
             document.getElementById('bitenOyun').textContent = biten;
             document.getElementById('istekOyun').textContent = istek;
+
+            if (puanliOyunlar.length > 0) {
+                const puanToplami = puanliOyunlar.reduce((toplamDeger, oyun) => toplamDeger + Number(oyun.puan), 0);
+                const ortalama = (puanToplami / puanliOyunlar.length).toFixed(1);
+                document.getElementById('ortalamaPuan').textContent = ortalama;
+            } else {
+                document.getElementById('ortalamaPuan').textContent = '-';
+            }
         }
+
+        document.getElementById('ornekYukleAnaSayfa').addEventListener('click', function() {
+            ornekOyunlariYukle();
+            istatistikleriGuncelle();
+            alert('Örnek oyunlar kütüphaneye eklendi.');
+        });
 
         document.addEventListener('DOMContentLoaded', istatistikleriGuncelle);
     </script>

@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kütüphanem - Oyun Kütüphanem</title>
+    <link rel="stylesheet" href="css/stil.css">
+</head>
+<body>
+    <header>
+        <h1>Oyun Kütüphanem</h1>
+        <nav>
+            <a href="index.html">Ana Sayfa</a>
+            <a href="kutuphane.html" class="aktif">Kütüphane</a>
+            <a href="oyun-ekle.html">Oyun Ekle</a>
+            <a href="hakkinda.html">Hakkında</a>
+            <button type="button" id="temaButonu" class="tema-butonu">Açık Tema</button>
+        </nav>
+    </header>
+
+    <main>
+        <h2>Oyun Arşivi</h2>
+
+        <div class="kutuphane-arac-cubugu">
+            <input type="text" id="aramaKutusu" placeholder="Oyun adı, tür veya nota göre arayınız..." oninput="oyunlariFiltrele()">
+            <select id="durumFiltresi" onchange="oyunlariFiltrele()">
+                <option value="hepsi">Tüm Durumlar</option>
+                <option value="Oynanıyor">Oynanıyor</option>
+                <option value="Bitti">Bitti</option>
+                <option value="İstek Listesi">İstek Listesi</option>
+            </select>
+            <select id="siralamaSecimi" onchange="oyunlariFiltrele()">
+                <option value="varsayilan">Eklenme Sırası</option>
+                <option value="puan-azalan">Puan (Yüksekten Düşüğe)</option>
+                <option value="puan-artan">Puan (Düşükten Yükseğe)</option>
+                <option value="isim-artan">İsme Göre (A-Z)</option>
+            </select>
+        </div>
+        
+        <div id="oyunKapsayici" class="oyun-liste-kapsayici"></div>
+    </main>
+
+    <footer>
+        <p>&copy; 2026 Oyun Kütüphanem &middot; BLM2537</p>
+    </footer>
+
+    <script src="js/uygulama.js"></script>
+    <script>
+        function durumSinifiGetir(durum) {
+            if (durum === 'Oynanıyor') return 'durum-oynaniyor';
+            if (durum === 'Bitti') return 'durum-bitti';
+            if (durum === 'İstek Listesi') return 'durum-istek';
+            return '';
+        }
+
+        function oyunlariEkranaBas(liste) {
+            const kapsayici = document.getElementById('oyunKapsayici');
+            const tumOyunlar = oyunlariGetir();
+            const oyunlar = liste || tumOyunlar;
+
+            kapsayici.innerHTML = '';
+
+            if (tumOyunlar.length === 0) {
+                kapsayici.innerHTML = `
+                    <div class="bos-kutuphane-kutusu">
+                        <p>Kütüphanenizde henüz kayıtlı oyun bulunmamaktadır.</p>
+                        <div class="hizli-eylemler">
+                            <a href="oyun-ekle.html" class="birincil-baglanti">İlk Oyunu Ekle</a>
+                            <button type="button" class="ikincil-buton" onclick="ornekVeriBas()">Örnek Oyunları Yükle</button>
+                        </div>
+                    </div>
+                `;
+                return;
+            }
+
+            if (oyunlar.length === 0) {
+                kapsayici.innerHTML = '<p class="bos-mesaj">Aradığınız kriterlere uygun oyun bulunamadı.</p>';
+                return;
+            }
+
+            oyunlar.forEach(oyun => {
+                const satir = document.createElement('div');
+                const durumSinifi = durumSinifiGetir(oyun.durum);
+                const mevcutPuan = oyun.puan !== null && oyun.puan !== '' && !isNaN(oyun.puan) ? oyun.puan : '';
+                const notBolumu = oyun.not ? `<p class="oyun-notu">${oyun.not}</p>` : '';
+                satir.className = `oyun-satiri ${durumSinifi}`;
+
+                satir.innerHTML = `
+                    <div class="oyun-bilgi">
+                        <div class="oyun-baslik-grubu">
+                            <h3>${oyun.baslik}</h3>
+                            <p>${oyun.kategori}</p>
+                            ${notBolumu}
+                        </div>
+                    </div>
+                    
+                    <div class="oyun-islemler">
+                        <div class="puan-duzenleme">
+                            <input type="number" class="puan-girdisi" min="1" max="10" value="${mevcutPuan}" placeholder="-" onchange="puanDegistir(${oyun.id}, this.value)">
+                            <span>/ 10</span>
+                        </div>
+                        <select class="durum-secimi" onchange="durumDegistir(${oyun.id}, this.value)">
+                            <option value="Oynanıyor" ${oyun.durum === 'Oynanıyor' ? 'selected' : ''}>Oynanıyor</option>
+                            <option value="Bitti" ${oyun.durum === 'Bitti' ? 'selected' : ''}>Bitti</option>
+                            <option value="İstek Listesi" ${oyun.durum === 'İstek Listesi' ? 'selected' : ''}>İstek Listesi</option>
+                        </select>
+                        <button type="button" class="sil-butonu" onclick="oyunSilmeIslemi(${oyun.id})">Sil</button>
+                    </div>
+                `;
+
+                kapsayici.appendChild(satir);
+            });
+        }
+
+        function oyunlariFiltrele() {
+            const arananMetin = document.getElementById('aramaKutusu').value.toLowerCase();
+            const secilenDurum = document.getElementById('durumFiltresi').value;
+            const siralamaTuru = document.getElementById('siralamaSecimi').value;
+            const tumOyunlar = oyunlariGetir();
+
+            const filtrelenmis = tumOyunlar.filter(oyun => {
+                const notMetni = oyun.not ? oyun.not.toLowerCase() : '';
+                const metinEslesti = oyun.baslik.toLowerCase().includes(arananMetin) ||
+                    oyun.kategori.toLowerCase().includes(arananMetin) ||
+                    notMetni.includes(arananMetin);
+                const durumEslesti = secilenDurum === 'hepsi' || oyun.durum === secilenDurum;
+                
+                return metinEslesti && durumEslesti;
+            });
+
+            if (siralamaTuru === 'puan-azalan') {
+                filtrelenmis.sort((a, b) => (Number(b.puan) || 0) - (Number(a.puan) || 0));
+            } else if (siralamaTuru === 'puan-artan') {
+                filtrelenmis.sort((a, b) => (Number(a.puan) || 0) - (Number(b.puan) || 0));
+            } else if (siralamaTuru === 'isim-artan') {
+                filtrelenmis.sort((a, b) => a.baslik.localeCompare(b.baslik, 'tr'));
+            }
+
+            oyunlariEkranaBas(filtrelenmis);
+        }
+
+        function oyunSilmeIslemi(oyunId) {
+            if (confirm('Bu oyunu silmek istediğinize emin misiniz?')) {
+                oyunSil(oyunId);
+                oyunlariFiltrele();
+            }
+        }
+
+        function durumDegistir(oyunId, yeniDurum) {
+            oyunDurumGuncelle(oyunId, yeniDurum);
+            oyunlariFiltrele();
+        }
+
+        function puanDegistir(oyunId, yeniPuan) {
+            oyunPuanGuncelle(oyunId, yeniPuan);
+            oyunlariFiltrele();
+        }
+
+        function ornekVeriBas() {
+            ornekOyunlariYukle();
+            oyunlariFiltrele();
+        }
+
+        document.addEventListener('DOMContentLoaded', () => oyunlariEkranaBas());
+    </script>
+</body>
+</html>
